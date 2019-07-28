@@ -10,6 +10,7 @@ import {
   User,
   Event,
 } from './types';
+import { Socket } from 'dgram';
 
 const PORT = process.env.PORT || 5000;
 
@@ -20,7 +21,7 @@ const FILE_EXTENSION_TO_CONTENT_TYPE: FileExtensionToContentTypeMap = {
   js: 'text/javascript',
 };
 
-const server = http.createServer( (request, response) => {
+const server = http.createServer((request, response) => {
   try {
     const url = request.url && request.url !== '/' ? request.url : '/index.html';
     const urlParts = url.split('.');
@@ -37,6 +38,22 @@ const server = http.createServer( (request, response) => {
     response.end(e.toString());
   }
 });
+
+const webSocketsServer = new WebSocket.Server({ server })
+
+webSocketsServer.on('connection', (socket) => {
+  console.log('Socket connected');
+
+  socket.send('Welcome')
+
+  socket.on('message', (message: any) => {
+    console.log(['socket message'], message);
+  });
+
+  socket.on('close', () => {
+    console.log('socket closed');
+  });
+})
 
 server.listen(PORT, () => {
   console.info(`server started on port ${PORT}`);
