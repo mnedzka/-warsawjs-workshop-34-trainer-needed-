@@ -20,7 +20,7 @@ const FILE_EXTENSION_TO_CONTENT_TYPE: FileExtensionToContentTypeMap = {
   js: 'text/javascript',
 };
 
-const server = http.createServer( (request, response) => {
+const server = http.createServer((request, response) => {
   try {
     const url = request.url && request.url !== '/' ? request.url : '/index.html';
     const urlParts = url.split('.');
@@ -87,6 +87,7 @@ webSocketsServer.on('connection', (socket: WebSocket) => {
 
         sendEvent(connectedUser.socket, {
           action: 'TRAINER_LOGGED',
+          payload: state.issues,
         });
 
         break;
@@ -102,6 +103,13 @@ webSocketsServer.on('connection', (socket: WebSocket) => {
         }];
 
         sendEvent(connectedUser.socket, { action: 'ISSUE_RECEIVED' });
+
+        state.trainers.forEach(({ socket }) => {
+          sendEvent(socket, {
+            action: 'ISSUES',
+            payload: state.issues,
+          });
+        });
 
         break;
       }
