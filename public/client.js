@@ -10,12 +10,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const getNodeById = id => document.getElementById(id);
   const renderLandingView = () => {
     renderTemplateById('landing');
+
+    getNodeById('loginParticipant').addEventListener('click', renderParticipantLoginView);
+    getNodeById('loginTrainer').addEventListener('click', renderTrainerLoginView);
   };
   const renderParticipantLoginView = () => {
     renderTemplateById('participantLogin');
+
+    getNodeById('participantLoginForm').addEventListener('submit', event => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+
+      sendEvent({
+        action: 'PARTICIPANT_LOGIN',
+        payload: {
+          name: formData.get('name'),
+          group: formData.get('group'),
+        },
+      });
+    });
   };
   const renderTrainerLoginView = () => {
     renderTemplateById('trainerLogin');
+
+    getNodeById('trainerLoginForm').addEventListener('submit', event => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+
+      sendEvent({
+        action: 'TRAINER_LOGIN',
+        payload: {
+          name: formData.get('name'),
+        },
+      });
+    });
   };
   const renderIssueSubmitView = () => {
     renderTemplateById('issueSubmit');
@@ -34,6 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   renderLandingView();
+
+  const sendEvent = event => {
+    try {
+      socket.send(JSON.stringify(event));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const socket = new WebSocket('ws://localhost:5000');
 

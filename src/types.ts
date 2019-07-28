@@ -20,7 +20,7 @@ export type Action = 'PARTICIPANT_LOGIN'
   | 'HINT'
   | 'HINT_FAIL'
   | 'ISSUES'
-;
+  ;
 
 export type IssueStatus = 'PENDING' | 'TAKEN' | 'SOLVED' | 'HINT';
 
@@ -50,5 +50,5 @@ export interface Issue {
 export interface State {
   participants: User[];
   trainers: User[];
-  issues: Issue[];
+  // issues: Issue[];
 }
